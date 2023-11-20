@@ -15,9 +15,10 @@
 #include "lite/api/light_api.h"
 #include <algorithm>
 #include <unordered_map>
-#include "paddle_use_kernels.h"  // NOLINT
-#include "paddle_use_ops.h"      // NOLINT
-
+//#include "paddle_use_kernels.h"  // NOLINT
+//#include "paddle_use_ops.h"      // NOLINT
+#include<iostream>
+using namespace std;
 namespace paddle {
 namespace lite {
 
@@ -32,6 +33,7 @@ void LightPredictor::Build(const std::string& lite_model_file,
 
   // For weight quantization of post training, load the int8/16 weights
   // for optimized model, and dequant it to fp32.
+
   DequantizeWeight();
   BuildRuntimeProgram(program_desc_);
   PrepareFeedFetch();
@@ -43,11 +45,7 @@ void LightPredictor::Build(const std::string& model_dir,
                            lite_api::LiteModelType model_type,
                            bool model_from_memory) {
   switch (model_type) {
-#ifndef LITE_ON_TINY_PUBLISH
-    case lite_api::LiteModelType::kProtobuf:
-      LoadModelPb(model_dir, "", "", scope_.get(), program_desc_.get());
-      break;
-#endif
+
     case lite_api::LiteModelType::kNaiveBuffer: {
       if (model_from_memory) {
         LoadModelNaiveFromMemory(

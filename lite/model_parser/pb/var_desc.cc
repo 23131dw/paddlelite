@@ -174,9 +174,11 @@ void VarDesc::SetDataTypes(
 //   return tensor_desc().data_type();
 // }
 VarDescAPI::VarDataType VarDesc::GetDataType() const {
+ 
   CHECK(desc_->has_type()) << "The var's type hasn't been set.";
   CHECK(desc_->type().has_type()) << "The var type hasn't been set.";
   if (desc_->type().type() != proto::VarType::LOD_TENSOR) {
+
     return VarDescAPI::Type();
   }
   auto type = tensor_desc().data_type();

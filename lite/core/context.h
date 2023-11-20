@@ -45,7 +45,8 @@
 #include "lite/utils/all.h"
 #include "lite/utils/env.h"
 #include "lite/utils/macros.h"
-
+#include<iostream>
+using namespace std;
 namespace paddle {
 namespace lite {
 
@@ -202,7 +203,7 @@ class Context<TargetType::kXPU> {
 };
 #endif
 
-#ifdef LITE_WITH_ARM
+
 template <>
 class Context<TargetType::kARM> {
  public:
@@ -245,7 +246,7 @@ class Context<TargetType::kARM> {
 
   std::string name() const { return "ARMContext"; }
 };
-#endif
+
 
 #ifdef LITE_WITH_FPGA
 // TODO(tianxiaogang): add needed implementation to context
@@ -433,12 +434,14 @@ class ContextScheduler {
             &context);
       } break;
 #endif
-#ifdef LITE_WITH_ARM
+
       case TARGET(kARM):
+      
         kernel_contexts_[TargetType::kARM].As<ARMContext>().CopySharedTo(
             &ctx->As<ARMContext>());
+        
         break;
-#endif
+
 #ifdef LITE_WITH_NPU
       case TARGET(kNPU):
         kernel_contexts_[TargetType::kNPU].As<NPUContext>().CopySharedTo(
@@ -503,7 +506,9 @@ class ContextScheduler {
  private:
   template <TargetType Type, typename ContextT>
   void InitContext() {
+  
     kernel_contexts_[Type].As<ContextT>().InitOnce();
+    
   }
 
   ContextScheduler() {
@@ -514,9 +519,10 @@ class ContextScheduler {
 #ifdef LITE_WITH_CUDA
     InitContext<TargetType::kCUDA, CUDAContext>();
 #endif
-#ifdef LITE_WITH_ARM
-    InitContext<TargetType::kARM, ARMContext>();
-#endif
+   
+   InitContext<TargetType::kARM, ARMContext>();
+   
+
 #ifdef LITE_WITH_OPENCL
     InitContext<TargetType::kOpenCL, OpenCLContext>();
 #endif

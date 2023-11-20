@@ -14,6 +14,8 @@
 
 #include "lite/model_parser/naive_buffer/naive_buffer.h"
 #include <stdio.h>
+#include<iostream>
+using namespace std;
 
 namespace paddle {
 namespace lite {
@@ -22,7 +24,6 @@ namespace naive_buffer {
 void BinaryTable::Require(size_t size) {
   CHECK(is_mutable_mode_);
   if (free_size() < size) {
-    bytes_.resize(cursor_ + size);
   }
 }
 
@@ -54,6 +55,46 @@ void BinaryTable::AppendToFile(const std::string &filename) const {
   fclose(fp);
 }
 
+void BinaryTable::LoadFromFile(  uint64_t  &topo_size,uint8_t* start)
+{
+
+  bytes_.resize(topo_size);
+  byte_t* address = bytes_.data();
+  int i;
+  int k;
+  uint64_t total = 0;
+  for(i=0;i<topo_size;i++)
+  {
+    memcpy(reinterpret_cast<char *>(address), start, 1);
+    start = start+1;
+    address = address + 1;
+  
+    if (*start == 0) 
+    {
+      k++;
+      if (k == 100) 
+      {
+        break;
+      }
+    } 
+    else 
+    {
+      k = 0;
+    }
+
+  }
+  i=i+100;
+  bytes_.resize(i);
+
+
+ // memcpy(reinterpret_cast<char *>(&bytes_[0]), start, topo_size);
+  size_t buffer_size = topo_size;
+  //Require(buffer_size);
+  is_mutable_mode_ = false;
+
+}
+
+
 void BinaryTable::LoadFromFile(const std::string &filename,
                                const size_t &offset,
                                const size_t &size) {
@@ -81,7 +122,7 @@ void BinaryTable::LoadFromFile(const std::string &filename,
 
 void BinaryTable::LoadFromMemory(const char *buffer, size_t buffer_size) {
   // get buffer
-  bytes_.resize(buffer_size);
+ // bytes_.resize(buffer_size);
   memcpy(reinterpret_cast<char *>(&bytes_[0]), buffer, buffer_size);
   // Set readonly.
   is_mutable_mode_ = false;

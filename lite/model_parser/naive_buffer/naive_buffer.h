@@ -19,7 +19,9 @@
 #include "lite/core/types.h"
 #include "lite/utils/container.h"
 #include "lite/utils/cp_logging.h"
-
+#include<iostream>
+using namespace std;
+#include<array>
 /*
  * This file contains the implementation of NaiveBuffer. We implement the basic
  * interfaces for serialization and de-serialization for a PaddlePaddle model to
@@ -43,6 +45,8 @@ using byte_t = uint8_t;
 struct BinaryTable {
  private:
   std::vector<byte_t> bytes_;
+ // std::array<byte_t, 10000000> bytes_;
+
   size_t cursor_{};
   bool is_mutable_mode_{true};  // true for mutable, false for readonly.
 
@@ -67,6 +71,7 @@ struct BinaryTable {
   void LoadFromFile(const std::string& filename,
                     const size_t& offset = 0,
                     const size_t& size = 0);
+  void LoadFromFile(  uint64_t  &topo_size,uint8_t* start);
   void LoadFromMemory(const char* buffer, size_t buffer_size);
 };
 
@@ -424,6 +429,7 @@ void EnumBuilder<EnumType>::Save() {
 
 template <typename EnumType>
 void EnumBuilder<EnumType>::Load() {
+
   value_type holder;
   memcpy(&holder, table()->cursor(), sizeof(value_type));
   table()->Consume(sizeof(value_type));

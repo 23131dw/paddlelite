@@ -57,7 +57,7 @@ else()
         target_sources(paddle_light_api_shared PUBLIC ${__lite_cc_files} paddle_api.cc light_api.cc light_api_impl.cc)
         set(TARGET_COMIPILE_FLAGS "-fdata-sections")
         if (NOT (ARM_TARGET_LANG STREQUAL "clang")) #gcc
-            set(TARGET_COMIPILE_FLAGS "${TARGET_COMIPILE_FLAGS} -flto")
+            #set(TARGET_COMIPILE_FLAGS "${TARGET_COMIPILE_FLAGS} -flto")
             # TODO (hong19860320): Disable lto temporarily since it causes fail to catch the exceptions in android when toolchain is gcc.
             if (ARM_TARGET_OS STREQUAL "android" AND LITE_WITH_EXCEPTION)
                 set(TARGET_COMIPILE_FLAGS "")

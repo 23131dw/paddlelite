@@ -17,6 +17,7 @@
 #include <limits.h>
 #include <algorithm>
 #include <cmath>
+#include <climits>
 
 namespace paddle {
 namespace lite {

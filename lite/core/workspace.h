@@ -59,9 +59,9 @@ class WorkSpace {
   static WorkSpace& Global_X86() { return Global_Host(); }
 #endif
 
-#if defined(LITE_WITH_ARM)
+//#if defined(LITE_WITH_ARM)
   static WorkSpace& Global_ARM() { return Global_Host(); }
-#endif
+//#endif
 
 #if defined(LITE_WITH_CUDA)
   static WorkSpace& Global_CUDA() {

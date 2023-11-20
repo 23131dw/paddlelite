@@ -24,12 +24,14 @@
 #include "lite/backends/mlu/mlu_utils.h"
 #endif
 #include "lite/utils/macros.h"
-
+#include<iostream>
+using namespace std;
+//#define LITE_WITH_ARM
 namespace paddle {
 namespace lite {
 
 using L3CacheSetMethod = lite_api::L3CacheSetMethod;
-#if ((defined LITE_WITH_ARM) || (defined LITE_WITH_MLU))
+//#if ((defined LITE_WITH_ARM) || (defined LITE_WITH_MLU))
 
 typedef enum {
   kAPPLE = 0,
@@ -51,7 +53,9 @@ class DeviceInfo {
   }
 
   static int Init() {
+   
     static int ret = Global().Setup();
+    
     return ret;
   }
 
@@ -182,7 +186,7 @@ class DeviceInfo {
   int absolute_l3cache_size_{-1};
   DeviceInfo() = default;
 };
-#endif  // LITE_WITH_ARM
+//#endif  // LITE_WITH_ARM
 
 template <TargetType Type>
 class Device;

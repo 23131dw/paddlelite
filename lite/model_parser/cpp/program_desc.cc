@@ -13,13 +13,15 @@
 // limitations under the License.
 
 #include "lite/model_parser/cpp/program_desc.h"
-
+#include<iostream>
+using namespace std;
 namespace paddle {
 namespace lite {
 namespace cpp {
 
 template <>
 BlockDesc* ProgramDesc::GetBlock<BlockDesc>(int32_t idx) {
+
   CHECK_LT(idx, BlocksSize()) << "idx >= blocks.size()";
   return &blocks_[idx];
 }

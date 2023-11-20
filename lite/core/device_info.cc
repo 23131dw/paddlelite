@@ -30,7 +30,8 @@
 // WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 // License for the specific language governing permissions and limitations under
 // the License.
-
+#include <zephyr/kernel.h>
+#include <zephyr/sys/mem_manage.h>
 #ifdef LITE_WITH_LINUX
 #include <sys/syscall.h>
 #include <unistd.h>
@@ -54,11 +55,13 @@
 #include <algorithm>
 #include <limits>
 #include "lite/core/device_info.h"
-
+#include<iostream>
+using namespace std;
+//#define LITE_WITH_ARM
 namespace paddle {
 namespace lite {
 
-#if ((defined LITE_WITH_ARM) || (defined LITE_WITH_MLU))
+//#if ((defined LITE_WITH_ARM) || (defined LITE_WITH_MLU))
 LITE_THREAD_LOCAL lite_api::PowerMode DeviceInfo::mode_;
 LITE_THREAD_LOCAL ARMArch DeviceInfo::arch_;
 LITE_THREAD_LOCAL int DeviceInfo::mem_size_;
@@ -80,8 +83,8 @@ const int DEFAULT_L1_CACHE_SIZE = 64 * 1024;
 const int DEFAULT_L2_CACHE_SIZE = 2048 * 1024;
 const int DEFAULT_L3_CACHE_SIZE = 0;
 #else
-const int DEFAULT_L1_CACHE_SIZE = 32 * 1024;
-const int DEFAULT_L2_CACHE_SIZE = 512 * 1024;
+const int DEFAULT_L1_CACHE_SIZE = 16 * 1024;
+const int DEFAULT_L2_CACHE_SIZE = 0;
 const int DEFAULT_L3_CACHE_SIZE = 0;
 #endif
 
@@ -140,7 +143,7 @@ size_t get_mem_size() {
   printf("not implemented, set to default 4GB\n");
   return 4096 * 1024;
 #endif
-  return 0;
+  return 4096*1024;
 }
 
 void get_cpu_arch(std::vector<ARMArch>* archs, const int cpu_num) {
@@ -1049,6 +1052,7 @@ int DeviceInfo::Setup() {
 #else
   dev_name_ = "Unknown";
 #endif
+
   core_ids_.resize(core_num_);
   cluster_ids_.resize(core_num_);
   big_core_ids_.resize(core_num_);
@@ -1059,7 +1063,9 @@ int DeviceInfo::Setup() {
     core_ids_[i] = i;
     big_core_ids_[i] = i;
   }
+  
 #endif
+ 
   // output info
   LOG(INFO) << "ARM multiprocessors name: " << dev_name_;
   LOG(INFO) << "ARM multiprocessors number: " << core_num_;
@@ -1205,7 +1211,7 @@ bool DeviceInfo::ExtendWorkspace(size_t size) {
   return workspace_.mutable_data<int8_t>() != nullptr;
 }
 
-#endif  // LITE_WITH_ARM
+//#endif  // LITE_WITH_ARM
 
 #ifdef LITE_WITH_MLU
 void SetMluDevice(int device_id) {

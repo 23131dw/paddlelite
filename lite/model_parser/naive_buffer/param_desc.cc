@@ -16,7 +16,8 @@
 #include <string>
 #include <vector>
 #include "lite/model_parser/naive_buffer/naive_buffer_wrapper_helper.h"
-
+#include<iostream>
+using namespace std;
 namespace paddle {
 namespace lite {
 namespace naive_buffer {
@@ -78,7 +79,6 @@ void ParamDesc::SetLoD(const std::vector<std::vector<uint64_t>>& lod) {
 
 VarDescAPI::VarDataType ParamDesc::GetDataType() const {
   using data_type_builder_t = EnumBuilder<proto::VarDataType>;
-
   auto data_type =
       GetTensorDesc().GetField<data_type_builder_t>("data_type").data();
 #define GET_DATA_TYPE_CASE_ITEM(type__) \
@@ -97,7 +97,9 @@ VarDescAPI::VarDataType ParamDesc::GetDataType() const {
     default:
       LOG(FATAL) << "Unknown var data type";
   }
+
   return VarDescAPI::VarDataType();
+
 #undef GET_DATA_TYPE_CASE_ITEM
 }
 

@@ -14,7 +14,8 @@
 
 #pragma once
 
-#include <dirent.h>
+#include "lite/utils/dirent.h"
+//#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fstream>

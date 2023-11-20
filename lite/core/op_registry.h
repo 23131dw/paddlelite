@@ -405,12 +405,7 @@ class KernelRegistry final {
 
  private:
   mutable std::vector<any_kernel_registor_t> registries_;
-#ifndef LITE_ON_TINY_PUBLISH
-  mutable std::map<
-      std::string,
-      std::vector<std::tuple<TargetType, PrecisionType, DataLayoutType>>>
-      kernel_info_map_;
-#endif
+
 };
 
 template <TargetType target,

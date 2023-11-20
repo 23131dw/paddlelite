@@ -17,7 +17,8 @@
 #include "lite/core/tensor.h"
 #include <string>
 #include "lite/utils/string.h"
-
+#include<iostream>
+using namespace std;
 namespace paddle {
 namespace lite {
 
@@ -88,12 +89,14 @@ void TensorLite::CopyDataFrom(const TensorLite &other) {
 }
 
 void *TensorLite::mutable_data(size_t memory_size) {
+ 
   memory_size_ = memory_size;
   buffer_->ResetLazy(target_, memory_size_);
   return buffer_->data();
 }
 
 void *TensorLite::mutable_data(TargetType target, size_t memory_size) {
+ 
   target_ = target;
   return mutable_data(memory_size);
 }

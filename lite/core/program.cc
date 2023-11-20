@@ -25,7 +25,8 @@
 #ifdef LITE_WITH_PRECISION_PROFILE
 #include "lite/core/profile/precision_profiler.h"
 #endif
-
+#include<iostream>
+using namespace std;
 namespace paddle {
 namespace lite {
 
@@ -160,16 +161,7 @@ RuntimeProgram::RuntimeProgram(
     Scope* exec_scope,
     int block_idx)
     : exec_scope_(exec_scope) {
-#ifdef LITE_WITH_OPENCL
-  bool opencl_valid = paddle::lite::CLWrapper::Global()->OpenclLibFound() &&
-                      paddle::lite::CLWrapper::Global()->DlsymSuccess() &&
-                      CLRuntime::Global()->OpenCLAvaliableForDevice();
-  using OpenCLContext = Context<TargetType::kOpenCL>;
-  std::unique_ptr<KernelContext> unique_opencl_ctx(new KernelContext());
-  if (opencl_valid) {
-    unique_opencl_ctx->As<OpenCLContext>().InitOnce();
-  }
-#endif
+
   CHECK(program_desc);
   auto block_size = program_desc->BlocksSize();
   CHECK(block_size) << "No block found!";
@@ -186,6 +178,7 @@ RuntimeProgram::RuntimeProgram(
     // if (op_type == "feed" || op_type == "fetch") continue;
     // Create op and pick up the best kernel
     auto op = LiteOpRegistry::Global().Create(op_type);
+
     CHECK(op) << "no Op found for " << op_type;
     if (op_type == "while") {
       static_cast<operators::WhileOp*>(op.get())->SetProgramDesc(program_desc);
@@ -221,17 +214,16 @@ RuntimeProgram::RuntimeProgram(
       VLOG(3) << "The attr '" << kKernelTypeAttr
               << "' not found, pick the first kernel for " << op_type;
       std::vector<std::unique_ptr<KernelBase>> kernels;
-#if defined(LITE_WITH_ARM)
+
       kernels = op->CreateKernels({Place{TARGET(kARM)}, Place{TARGET(kHost)}});
-#elif defined(LITE_WITH_X86)
-      kernels = op->CreateKernels({Place{TARGET(kX86)}, Place{TARGET(kHost)}});
-#endif
+
       if (kernels.size() > 0) {
         kernel = std::move(kernels.front());
       } else {
         LOG(WARNING) << "No kernels found for " << op_type;
       }
     }
+    
 #ifdef LITE_WITH_OPENCL
     if (kernel->target() == TARGET(kOpenCL)) {
       if (opencl_valid) {
@@ -248,11 +240,16 @@ RuntimeProgram::RuntimeProgram(
           ContextScheduler::Global().NewContext(kernel->target()));
     }
 #else
+    
     kernel->SetContext(ContextScheduler::Global().NewContext(kernel->target()));
+   
 #endif
+     
     instructions_[kRootBlockIdx].emplace_back(std::move(op), std::move(kernel));
   }
+ 
   Init();
+  
 }
 
 void RuntimeProgram::Run() {

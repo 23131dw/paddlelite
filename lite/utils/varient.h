@@ -140,7 +140,7 @@ struct variant {
       LOG(ERROR) << "unmatched type get, should be " << type_id << " but get "
                  << typeid(T).name();
 #else
-      throw std::invalid_argument("unmatched type");
+     throw std::invalid_argument("unmatched type");
 #endif
     }
   }
